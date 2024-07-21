@@ -289,17 +289,3 @@ function calculateAngle(x1, y1, x2, y2) {
   let angle = v.heading();
   return angle;
 }
-
-class Particle extends VerletParticle2D {
-  constructor(x, y) {
-    super(x, y);
-    physics.addParticle(this);
-  }
-}
-
-class Spring extends VerletSpring2D {
-  constructor(a, b, strength) {
-    super(a, b, a.distanceTo(b), strength);
-    physics.addSpring(this);
-  }
-}
