@@ -1,85 +1,138 @@
-# Setting Up Your Node.js WebSocket Server on DigitalOcean
+# Labirintos Interactive Installation
 
-This guide will walk you through setting up your Node.js WebSocket server on DigitalOcean's most cost-effective option.
+This project consists of an interactive installation using WebSockets to communicate between a main display (`LabirintosFinal`), a wall display (`labirintosWall`), and a server (`labirintosServer.js`).
 
-## 1. Create a Droplet
+## Project Structure
+
+- `LabirintosFinal/`: Main interactive display
+- `labirintosWall/`: Wall display for accumulated text
+- `labirintosServer.js`: WebSocket server
+- `package.json`: Node.js project file
+
+## Server Setup (DigitalOcean)
+
+### 1. Create a Droplet
 
 1. Log in to your DigitalOcean account.
-2. Click "Create" and select "Droplets".
-3. Choose Ubuntu (latest LTS version) as the image.
-4. Select the "Basic" plan with the cheapest option ($4/month, 1GB RAM / 1 CPU).
-5. Choose a datacenter region closest to your target audience.
-6. Select SSH keys or password for authentication.
-7. Give your Droplet a hostname (e.g., "node-websocket-server").
-8. Click "Create Droplet".
+2. Create a new Droplet with Ubuntu (latest LTS version).
+3. Choose the Basic plan with the cheapest option.
+4. Select a datacenter region close to your target audience.
+5. Choose SSH keys or password for authentication.
+6. Create the Droplet.
 
-## 2. Connect to Your Droplet
+### 2. Connect to Your Droplet
 
-1. Note down your Droplet's IP address.
-2. Connect via SSH: `ssh root@your_droplet_ip`
+```bash
+ssh root@your_droplet_ip
+```
 
-## 3. Set Up the Environment
+### 3. Update and Install Dependencies
 
-1. Update your system:
-   ```
-   sudo apt update && sudo apt upgrade -y
-   ```
+```bash
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt install git
+```
 
-2. Install Node.js and npm:
-   ```
-   curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-   sudo apt-get install -y nodejs
-   ```
+### 4. Clone and Set Up the Project
 
-3. Install Git:
-   ```
-   sudo apt install git
-   ```
+```bash
+git clone https://your-repository-url.git
+cd your-project-directory
+npm install
+```
 
-## 4. Deploy Your Application
+### 5. Set Up SSL for Secure WebSocket (WSS)
 
-1. Clone your repository or create a new directory.
-2. Navigate to your project directory.
-3. Install dependencies:
-   ```
-   npm install
-   ```
+Generate a self-signed certificate:
 
-## 5. Set Up Process Management
+```bash
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/selfsigned.key -out /etc/ssl/certs/selfsigned.crt
+```
 
-1. Install PM2:
-   ```
-   sudo npm install pm2 -g
-   ```
+When prompted, use your server's IP address for the "Common Name" field.
 
-2. Start your application:
-   ```
-   pm2 start server.js
-   ```
+### 6. Modify labirintosServer.js
 
-3. Set up PM2 to start on system reboot:
-   ```
-   pm2 startup systemd
-   ```
-   Follow the provided instructions.
+Update `labirintosServer.js` to use HTTPS and WSS:
 
-4. Save the PM2 process list:
-   ```
-   pm2 save
-   ```
+```javascript
+const https = require('https');
+const WebSocket = require('ws');
+const fs = require('fs');
+const path = require('path');
 
-## 6. Configure Firewall (Optional)
+const options = {
+  cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt'),
+  key: fs.readFileSync('/etc/ssl/private/selfsigned.key')
+};
 
-1. Set up a basic firewall:
-   ```
-   sudo ufw allow OpenSSH
-   sudo ufw allow 8080/tcp  # or your app's port
-   sudo ufw enable
-   ```
+const server = https.createServer(options, (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.end();
+});
 
-## 7. Update Client-Side Code
+const wss = new WebSocket.Server({ server });
 
-Update your client-side code to use the new IP address or domain name of your DigitalOcean Droplet.
+// ... rest of your server code ...
 
-Remember to monitor your usage and upgrade if necessary as your application grows.
+const port = process.env.PORT || 8080;
+server.listen(port, () => {
+  console.log(`Secure WebSocket server is running on port ${port}`);
+  
+  // ... rest of your server startup code ...
+});
+```
+
+### 7. Set Up Process Management with PM2
+
+```bash
+sudo npm install pm2 -g
+pm2 start labirintosServer.js
+pm2 startup systemd
+pm2 save
+```
+
+### 8. Configure Firewall
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 8080/tcp
+sudo ufw enable
+```
+
+## Client-Side Changes (p5.js sketches)
+
+Update both `LabirintosFinal/sketch.js` and `labirintosWall/sketch.js` to use secure WebSocket:
+
+```javascript
+socket = new WebSocket('wss://your_droplet_ip:8080');
+```
+
+Replace `your_droplet_ip` with your DigitalOcean Droplet's IP address.
+
+## Running the Installation
+
+1. Ensure the server is running on your DigitalOcean Droplet.
+2. Open `LabirintosFinal/index.html` on the main display device.
+3. Open `labirintosWall/index.html` on the wall display device.
+
+## Troubleshooting
+
+- If you encounter security warnings in the browser, you may need to manually accept the risk due to the self-signed certificate.
+- For testing, you might need to lower your browser's security settings or use a tool like Postman that allows ignoring SSL certificate errors.
+- To view server logs: `pm2 logs labirintosServer`
+
+## Future Improvements
+
+- Replace the self-signed certificate with a trusted SSL certificate (e.g., Let's Encrypt) for better security and browser compatibility.
+- Set up a domain name for your server for easier management and security.
+
+## Note on Security
+
+The current setup uses a self-signed certificate, which is suitable for testing but not recommended for production. For a public-facing installation, consider using a domain name and obtaining a certificate from a trusted authority like Let's Encrypt.
 
