@@ -30,30 +30,6 @@ function preload() {
   font = loadFont("Acumin-BdPro.otf");
 }
 
-function setupWebSocket() {
-  // First, try to fetch from the server to trigger the SSL certificate warning
-  socket = new WebSocket("wss://206.189.10.46:8080");
-
-  socket.onopen = () => {
-    console.log("Connected to WebSocket server");
-    text("Connected to WebSocket server", width / 2, height / 2 + 90);
-  };
-
-  socket.onerror = (error) => {
-    console.error("WebSocket Error:", error);
-    text("WebSocket Error: " + error, width / 2, height / 2 + 90);
-  };
-
-  socket.onclose = (event) => {
-    console.log("WebSocket connection closed:", event.code, event.reason);
-    text(
-      "WebSocket connection closed: " + event.code + " " + event.reason,
-      width / 2,
-      height / 2 + 90
-    );
-  };
-}
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
   physics = new VerletPhysics2D();
@@ -63,30 +39,26 @@ function setup() {
   setupVideo();
   setupTextAndSpeech();
 
-  connectButton = createButton("Connect to WebSocket");
-  connectButton.position(20, 20);
-  connectButton.mousePressed(setupWebSocket);
+  setupWebSocket();
+}
 
-  textAlign(CENTER, CENTER);
-  textSize(16);
-  fill(0);
-  text("Please follow these steps to connect:", width / 2, height / 2 - 60);
-  text(
-    "1. Click this link to open the certificate warning page:",
-    width / 2,
-    height / 2 - 30
-  );
-  text("https://206.189.10.46:8080", width / 2, height / 2);
-  text(
-    '2. Click "Advanced" and then "Proceed to 206.189.10.46 (unsafe)"',
-    width / 2,
-    height / 2 + 30
-  );
-  text(
-    '3. Once you\'ve accepted the certificate, come back here and click "Connect to WebSocket"',
-    width / 2,
-    height / 2 + 60
-  );
+function setupWebSocket() {
+  socket = new WebSocket("wss://206.189.10.46:8080");
+
+  socket.onopen = () => {
+    console.log("Connected to WebSocket server");
+  };
+
+  socket.onerror = (error) => {
+    console.error("WebSocket Error: ", error);
+    console.log(
+      "If you're seeing certificate errors, please visit https://206.189.10.46:8080 in a new tab and accept the risk to proceed."
+    );
+  };
+
+  socket.onclose = (event) => {
+    console.log("WebSocket connection closed: ", event.code, event.reason);
+  };
 }
 
 function initializeParticlesAndSprings() {
