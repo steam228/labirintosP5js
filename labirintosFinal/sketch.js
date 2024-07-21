@@ -43,6 +43,9 @@ function setup() {
   socket.onopen = () => {
     console.log("Connected to WebSocket server");
   };
+  socket.onerror = (error) => {
+    console.error("WebSocket Error: ", error);
+  };
 }
 
 function initializeParticlesAndSprings() {
