@@ -46,6 +46,9 @@ function setup() {
   socket.onerror = (error) => {
     console.error("WebSocket Error: ", error);
   };
+  socket.onclose = (event) => {
+    console.log("WebSocket connection closed: ", event.code, event.reason);
+  };
 }
 
 function initializeParticlesAndSprings() {
