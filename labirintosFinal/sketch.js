@@ -17,7 +17,7 @@ let isListening = false;
 let smoothLeftWrist = { x: 0, y: 0 };
 let smoothRightWrist = { x: 0, y: 0 };
 const smoothingFactor = 0.8;
-const wristProximityThreshold = 200;
+const wristProximityThreshold = 250;
 let isListeningFromProximity = false;
 let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
@@ -39,7 +39,7 @@ function setup() {
   setupVideo();
   setupTextAndSpeech();
 
-  socket = new WebSocket("ws://steam228AI.local:8080");
+  socket = new WebSocket("ws://206.189.10.46:8080");
   socket.onopen = () => {
     console.log("Connected to WebSocket server");
   };
