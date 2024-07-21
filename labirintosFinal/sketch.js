@@ -40,14 +40,17 @@ function setup() {
   setupTextAndSpeech();
 
   socket = new WebSocket("wss://206.189.10.46:8080");
+
   socket.onopen = () => {
     console.log("Connected to WebSocket server");
   };
+
   socket.onerror = (error) => {
-    console.error("WebSocket Error: ", error);
+    console.error("WebSocket Error:", error);
   };
+
   socket.onclose = (event) => {
-    console.log("WebSocket connection closed: ", event.code, event.reason);
+    console.log("WebSocket connection closed:", event.code, event.reason);
   };
 }
 
