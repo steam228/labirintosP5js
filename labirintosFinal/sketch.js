@@ -30,6 +30,30 @@ function preload() {
   font = loadFont("Acumin-BdPro.otf");
 }
 
+function setupWebSocket() {
+  // First, try to fetch from the server to trigger the SSL certificate warning
+  fetch("https://206.189.10.46:8080", { mode: "no-cors" })
+    .then(() => {
+      // If fetch succeeds (or the user accepts the certificate warning), connect via WebSocket
+      socket = new WebSocket("wss://206.189.10.46:8080");
+
+      socket.onopen = () => {
+        console.log("Connected to WebSocket server");
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket Error:", error);
+      };
+
+      socket.onclose = (event) => {
+        console.log("WebSocket connection closed:", event.code, event.reason);
+      };
+    })
+    .catch((error) => {
+      console.error("Error setting up WebSocket connection:", error);
+    });
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   physics = new VerletPhysics2D();
@@ -39,19 +63,7 @@ function setup() {
   setupVideo();
   setupTextAndSpeech();
 
-  socket = new WebSocket("wss://206.189.10.46:8080");
-
-  socket.onopen = () => {
-    console.log("Connected to WebSocket server");
-  };
-
-  socket.onerror = (error) => {
-    console.error("WebSocket Error:", error);
-  };
-
-  socket.onclose = (event) => {
-    console.log("WebSocket connection closed:", event.code, event.reason);
-  };
+  setupWebSocket();
 }
 
 function initializeParticlesAndSprings() {
