@@ -25,6 +25,7 @@ let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
 let captureGraphics;
+let fullScreenButton;
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -39,8 +40,11 @@ function setup() {
   initializeParticlesAndSprings();
   setupVideo();
   setupTextAndSpeech();
-
   setupWebSocket();
+
+  // Setup fullscreen button
+  fullScreenButton = select("#fullScreenButton");
+  fullScreenButton.mousePressed(toggleFullScreen);
 }
 
 function setupWebSocket() {
@@ -211,6 +215,13 @@ function draw() {
   updateWristPositions();
   checkWristProximity();
   drawText();
+
+  // Handle fullscreen button visibility
+  if (fullscreen()) {
+    fullScreenButton.style("display", "none");
+  } else {
+    fullScreenButton.style("display", "block");
+  }
 }
 
 function updateWristPositions() {
@@ -353,6 +364,11 @@ function sendImageViaWebSocket(graphics) {
   } else {
     console.error("WebSocket is not open. Unable to send image.");
   }
+}
+
+function toggleFullScreen() {
+  let fs = fullscreen();
+  fullscreen(!fs);
 }
 
 function windowResized() {
