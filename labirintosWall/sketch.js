@@ -12,7 +12,11 @@ let lineHeight;
 let leftMargin;
 
 function preload() {
+<<<<<<< HEAD
   font = loadFont("./Acumin-BdPro.otf");
+=======
+  font = loadFont("Acumin-BdPro.otf");
+>>>>>>> parent of 230e238 (wall update)
   console.log("Font loaded");
 }
 
@@ -21,7 +25,11 @@ function setup() {
   textFont(font);
   textAlign(LEFT, BOTTOM);
 
+<<<<<<< HEAD
   fontSize = height * 0.06; // Increased from 0.05 to 0.06 (20% increase)
+=======
+  fontSize = height * 0.05;
+>>>>>>> parent of 230e238 (wall update)
   lineHeight = fontSize * 1.5;
   leftMargin = width * 0.1;
 

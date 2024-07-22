@@ -24,8 +24,14 @@ let isListeningFromProximity = false;
 let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
+<<<<<<< HEAD
 let captureGraphics;
 let fullScreenButton;
+=======
+let saveImageTimer = 0;
+let shouldSaveImage = false;
+let personDetected = false;
+>>>>>>> parent of 230e238 (wall update)
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -33,6 +39,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+<<<<<<< HEAD
   captureGraphics = createGraphics(windowWidth, windowHeight);
   window.physics = new VerletPhysics2D();
   window.physics.setWorldBounds(new Rect(0, 0, width, height));
@@ -44,6 +51,10 @@ function setup() {
     );
     return;
   }
+=======
+  physics = new VerletPhysics2D();
+  physics.setWorldBounds(new Rect(0, 0, width, height));
+>>>>>>> parent of 230e238 (wall update)
 
   initializeParticlesAndSprings();
   setupVideo();
