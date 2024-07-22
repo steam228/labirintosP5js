@@ -41,8 +41,7 @@ function setup() {
   setupTextAndSpeech();
 
   setupWebSocket();
-  enterFullscreen();
-}
+  
 
 function setupWebSocket() {
   socket = new WebSocket("wss://206.189.10.46:8080");
@@ -93,7 +92,9 @@ function initializeParticlesAndSprings() {
 
 function setupVideo() {
   video = createCapture(VIDEO);
-  video.size(640, 480);
+  vw = width;
+  vh = width * (1080 / 1920);
+  video.size(vw, vh);
   video.hide();
   poseNet = ml5.poseNet(video, { flipHorizontal: true }, modelLoaded);
   poseNet.on("pose", gotPoses);
@@ -368,15 +369,4 @@ function windowResized() {
   initializeParticlesAndSprings();
 }
 
-function enterFullscreen() {
-  let fs = fullscreen();
-  fullscreen(!fs);
-}
 
-// Handle fullscreen change
-function fullscreenChanged() {
-  if (!fullscreen()) {
-    // Re-enter fullscreen if accidentally exited
-    enterFullscreen();
-  }
-}
