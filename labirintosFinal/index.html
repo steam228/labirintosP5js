@@ -27,12 +27,13 @@
           align-items: center;
           font-family: Arial, sans-serif;
           font-size: 24px;
+          z-index: 1000;
       }
       #fullScreenButton {
           position: fixed;
           top: 10px;
           right: 10px;
-          z-index: 1000;
+          z-index: 1001;
           width: 20px;
           height: 20px;
           border-radius: 50%;
@@ -48,13 +49,37 @@
       #fullScreenButton:hover {
           transform: scale(1.1);
       }
+      #p5Canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 0;
+      }
   </style>
 </head>
 <body>
   <div id="p5_loading">Loading...</div>
+  <div id="p5Canvas"></div>
   <button id="fullScreenButton" title="Enter Fullscreen"></button>
+  <script src="particle.js"></script>
+  <script src="spring.js"></script>
   <script src="sketch.js"></script>
   <script>
+      // Ensure the p5.js sketch uses the p5Canvas div
+      new p5(function(p) {
+          // Copy all global mode sketch functions to instance mode
+          for (let f in window) {
+              if (typeof window[f] === 'function') {
+                  p[f] = window[f].bind(p);
+              }
+          }
+
+          // Override createCanvas to use the p5Canvas div
+          p.createCanvas = function() {
+              return p._createCanvas.apply(p, arguments).parent('p5Canvas');
+          }
+      });
+
       document.getElementById('fullScreenButton').addEventListener('click', () => {
           let fs = document.documentElement;
           if (fs.requestFullscreen) {
