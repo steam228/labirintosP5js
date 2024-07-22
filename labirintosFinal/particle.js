@@ -1,9 +1,8 @@
-// particle.js
-window.Particle = class extends toxi.physics2d.VerletParticle2D {
+class Particle extends VerletParticle2D {
   constructor(x, y) {
     super(x, y);
     this.r = 2;
-    window.physics.addParticle(this);
+    physics.addParticle(this);
   }
 
   show() {
@@ -14,4 +13,4 @@ window.Particle = class extends toxi.physics2d.VerletParticle2D {
     strokeWeight(this.r * 4);
     point(this.x, this.y);
   }
-};
+}

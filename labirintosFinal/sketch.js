@@ -4,7 +4,7 @@ const { VerletPhysics2D, VerletParticle2D, VerletSpring2D } = toxi.physics2d;
 const { GravityBehavior } = toxi.physics2d.behaviors;
 const { Vec2D, Rect } = toxi.geom;
 
-window.physics;
+let physics;
 let particles = [];
 let pointsType = [];
 let springs = [];
@@ -24,14 +24,7 @@ let isListeningFromProximity = false;
 let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
-<<<<<<< HEAD
 let captureGraphics;
-let fullScreenButton;
-=======
-let saveImageTimer = 0;
-let shouldSaveImage = false;
-let personDetected = false;
->>>>>>> parent of 230e238 (wall update)
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -39,28 +32,15 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-<<<<<<< HEAD
   captureGraphics = createGraphics(windowWidth, windowHeight);
-  window.physics = new VerletPhysics2D();
-  window.physics.setWorldBounds(new Rect(0, 0, width, height));
-
-  // Ensure Particle is defined before using it
-  if (typeof Particle === "undefined") {
-    console.error(
-      "Particle class is not defined. Check if particle.js is loaded correctly."
-    );
-    return;
-  }
-=======
   physics = new VerletPhysics2D();
   physics.setWorldBounds(new Rect(0, 0, width, height));
->>>>>>> parent of 230e238 (wall update)
 
   initializeParticlesAndSprings();
   setupVideo();
   setupTextAndSpeech();
+
   setupWebSocket();
-  setupFullScreenButton();
 }
 
 function setupWebSocket() {
@@ -374,25 +354,6 @@ function sendImageViaWebSocket(graphics) {
     console.error("WebSocket is not open. Unable to send image.");
   }
 }
-
-function setupFullScreenButton() {
-  fullScreenButton = document.getElementById("fullScreenButton");
-  fullScreenButton.addEventListener("click", toggleFullScreen);
-}
-
-function toggleFullScreen() {
-  let fs = fullscreen();
-  fullscreen(!fs);
-  if (!fs) {
-    fullScreenButton.style.display = "none";
-  }
-}
-
-document.addEventListener("fullscreenchange", () => {
-  if (!document.fullscreenElement) {
-    fullScreenButton.style.display = "block";
-  }
-});
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
