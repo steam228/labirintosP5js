@@ -41,6 +41,7 @@ function setup() {
   setupTextAndSpeech();
 
   setupWebSocket();
+  enterFullscreen();
 }
 
 function setupWebSocket() {
@@ -365,4 +366,17 @@ function windowResized() {
   pointsType = [];
   springs = [];
   initializeParticlesAndSprings();
+}
+
+function enterFullscreen() {
+  let fs = fullscreen();
+  fullscreen(!fs);
+}
+
+// Handle fullscreen change
+function fullscreenChanged() {
+  if (!fullscreen()) {
+    // Re-enter fullscreen if accidentally exited
+    enterFullscreen();
+  }
 }
