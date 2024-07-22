@@ -1,3 +1,5 @@
+//Labirintos Wall - in another wall a poem will be formed from the interaction of with the main. With no interaction it will form a screensaver animation with the words.
+
 let socket;
 let messages = [];
 let font;
@@ -19,7 +21,7 @@ function setup() {
   textFont(font);
   textAlign(LEFT, BOTTOM);
 
-  fontSize = height * 0.05;
+  fontSize = height * 0.06; // Increased from 0.05 to 0.06 (20% increase)
   lineHeight = fontSize * 1.5;
   leftMargin = width * 0.1;
 

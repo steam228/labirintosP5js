@@ -1,3 +1,5 @@
+// main Labirintos sketch, should show interaction with text to speech in a projection and send sentences and picture of it to the server.
+
 const { VerletPhysics2D, VerletParticle2D, VerletSpring2D } = toxi.physics2d;
 const { GravityBehavior } = toxi.physics2d.behaviors;
 const { Vec2D, Rect } = toxi.geom;
@@ -22,10 +24,8 @@ let isListeningFromProximity = false;
 let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
-let saveImageTimer = 0;
-let shouldSaveImage = false;
-let personDetected = false;
 let captureGraphics;
+let capturedImage;
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -135,14 +135,10 @@ function handleSpeechResult(event) {
 
   stopListening();
   lastListeningToggleTime = millis();
-
-  saveImageTimer = millis();
-  shouldSaveImage = true;
 }
 
 function gotPoses(poses) {
-  personDetected = poses.length > 0;
-  if (personDetected) {
+  if (poses.length > 0) {
     pose = poses[0].pose;
     skeleton = poses[0].skeleton;
     updateSmoothWristPositions();
@@ -208,32 +204,28 @@ function stopListening() {
 }
 
 function draw() {
-  background(255);
+  // Draw video first
+  push();
+  translate(width, 0);
+  scale(-1, 1);
+  image(video, 0, 0, width, height);
+  pop();
+
+  // Draw semi-transparent overlay
+  push();
+  fill(255, 255, 255, 200);
+  rect(0, 0, width, height);
+  pop();
+
   physics.update();
 
   updateWristPositions();
   checkWristProximity();
   drawText();
-
-  if (shouldSaveImage && millis() - saveImageTimer > 2000) {
-    sendImageViaWebSocket();
-    shouldSaveImage = false;
-    console.log("Image sent via WebSocket");
-  }
-}
-
-function sendImageViaWebSocket() {
-  let imageData = canvas.toDataURL("image/png").split(",")[1];
-
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ type: "image", content: imageData }));
-  } else {
-    console.error("WebSocket is not open. Unable to send image.");
-  }
 }
 
 function updateWristPositions() {
-  if (personDetected && pose) {
+  if (pose) {
     pointsType[0].lock();
     pointsType[0].x = smoothLeftWrist.x;
     pointsType[0].y = smoothLeftWrist.y;
@@ -246,11 +238,7 @@ function updateWristPositions() {
 }
 
 function checkWristProximity() {
-  if (
-    personDetected &&
-    pose &&
-    millis() - lastListeningToggleTime > listeningCooldown
-  ) {
+  if (pose && millis() - lastListeningToggleTime > listeningCooldown) {
     let wristDistance = dist(
       smoothLeftWrist.x,
       smoothLeftWrist.y,
@@ -306,4 +294,28 @@ function calculateAngle(x1, y1, x2, y2) {
   let v = createVector(x1 - x2, y1 - y2);
   let angle = v.heading();
   return angle;
+}
+
+function keyPressed() {
+  if (key === " ") {
+    // Spacebar to capture and send image
+    captureAndSendImage();
+  }
+}
+
+function captureAndSendImage() {
+  capturedImage = createImage(width, height);
+  capturedImage.copy(canvas, 0, 0, width, height, 0, 0, width, height);
+  sendImageViaWebSocket();
+}
+
+function sendImageViaWebSocket() {
+  let imageData = capturedImage.canvas.toDataURL("image/png").split(",")[1];
+
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "image", content: imageData }));
+    console.log("Image sent via WebSocket");
+  } else {
+    console.error("WebSocket is not open. Unable to send image.");
+  }
 }

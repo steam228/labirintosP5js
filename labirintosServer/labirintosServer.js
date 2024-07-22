@@ -1,3 +1,5 @@
+//Labirinntos Server - Server for interactive Instalations
+
 const https = require("https");
 const WebSocket = require("ws");
 const fs = require("fs");
@@ -26,7 +28,7 @@ const wss = new WebSocket.Server({ server });
 
 let currentPoem = [];
 let lastMessageTime = Date.now();
-const inactivityThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
+const inactivityThreshold = 1 * 60 * 1000; // 5 minutes in milliseconds
 
 function checkInactivity() {
   if (Date.now() - lastMessageTime > inactivityThreshold) {
