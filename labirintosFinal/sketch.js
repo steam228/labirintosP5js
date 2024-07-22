@@ -25,7 +25,6 @@ let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
 let captureGraphics;
-let capturedImage;
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -204,18 +203,8 @@ function stopListening() {
 }
 
 function draw() {
-  // Draw video first
-  push();
-  translate(width, 0);
-  scale(-1, 1);
-  image(video, 0, 0, width, height);
-  pop();
-
-  // Draw semi-transparent overlay
-  push();
-  fill(255, 255, 255, 200);
-  rect(0, 0, width, height);
-  pop();
+  // White background
+  background(255);
 
   physics.update();
 
@@ -304,13 +293,59 @@ function keyPressed() {
 }
 
 function captureAndSendImage() {
-  capturedImage = createImage(width, height);
-  capturedImage.copy(canvas, 0, 0, width, height, 0, 0, width, height);
-  sendImageViaWebSocket();
+  captureGraphics.clear();
+
+  // Draw the video frame (inverted)
+  captureGraphics.push();
+  captureGraphics.translate(width, 0);
+  captureGraphics.scale(-1, 1);
+  captureGraphics.image(video, 0, 0, width, height);
+  captureGraphics.pop();
+
+  // Draw semi-transparent overlay
+  captureGraphics.push();
+  captureGraphics.fill(255, 255, 255, 200);
+  captureGraphics.rect(0, 0, width, height);
+  captureGraphics.pop();
+
+  // Draw the text on the capture graphics
+  drawTextOnGraphics(captureGraphics);
+
+  sendImageViaWebSocket(captureGraphics);
 }
 
-function sendImageViaWebSocket() {
-  let imageData = capturedImage.canvas.toDataURL("image/png").split(",")[1];
+function drawTextOnGraphics(graphics) {
+  graphics.textFont(font);
+  graphics.textSize(100);
+  graphics.fill(0);
+  graphics.noStroke();
+
+  let x = pointsType.map((p) => p.x);
+  let y = pointsType.map((p) => p.y);
+
+  for (let i = 0; i <= mensagem.length; i++) {
+    let steps = i / mensagem.length;
+    let pointX = bezierPoint(x[0], x[1], x[2], x[3], steps);
+    let pointY = bezierPoint(y[0], y[1], y[2], y[3], steps);
+
+    if (steps > 0) {
+      let currentChar = mensagem.charAt(i - 1);
+      let angle = calculateAngle(pointX, pointY, prevPointX, prevPointY);
+
+      graphics.push();
+      graphics.translate(pointX, pointY);
+      graphics.rotate(angle);
+      graphics.text(currentChar, 0, 0);
+      graphics.pop();
+    }
+
+    prevPointX = pointX;
+    prevPointY = pointY;
+  }
+}
+
+function sendImageViaWebSocket(graphics) {
+  let imageData = graphics.canvas.toDataURL("image/png").split(",")[1];
 
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: "image", content: imageData }));
