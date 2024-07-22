@@ -22,7 +22,7 @@ const smoothingFactor = 0.8;
 const wristProximityThreshold = 250;
 let isListeningFromProximity = false;
 let lastListeningToggleTime = 0;
-const listeningCooldown = 1800;
+const listeningCooldown = 1500;
 let socket;
 let captureGraphics;
 

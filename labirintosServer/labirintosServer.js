@@ -28,7 +28,7 @@ const wss = new WebSocket.Server({ server });
 
 let currentPoem = [];
 let lastMessageTime = Date.now();
-const inactivityThreshold = 1 * 60 * 1000; // 5 minutes in milliseconds
+const inactivityThreshold = 1 * 60 * 1000; // 1 minute in milliseconds
 
 function checkInactivity() {
   if (Date.now() - lastMessageTime > inactivityThreshold) {

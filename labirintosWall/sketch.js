@@ -4,7 +4,7 @@ let socket;
 let messages = [];
 let font;
 let lastMessageTime = 0;
-const inactivityThreshold = 1 * 60 * 1000; // 5 minutes in milliseconds
+const inactivityThreshold = 1 * 60 * 1000; // 1 minute in milliseconds
 let isScreensaverMode = false;
 let screensaverMessages = [];
 let fontSize;
