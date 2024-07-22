@@ -356,6 +356,15 @@ function sendImageViaWebSocket(graphics) {
   }
 }
 
+// If the mouse is pressed,
+// toggle full-screen mode.
+function mousePressed() {
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+    let fs = fullscreen();
+    fullscreen(!fs);
+  }
+}
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   captureGraphics.resizeCanvas(windowWidth, windowHeight);
