@@ -25,6 +25,7 @@ let socket;
 let saveImageTimer = 0;
 let shouldSaveImage = false;
 let personDetected = false;
+let captureGraphics;
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -32,6 +33,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  captureGraphics = createGraphics(windowWidth, windowHeight);
   physics = new VerletPhysics2D();
   physics.setWorldBounds(new Rect(0, 0, width, height));
 
