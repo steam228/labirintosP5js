@@ -354,3 +354,15 @@ function sendImageViaWebSocket(graphics) {
     console.error("WebSocket is not open. Unable to send image.");
   }
 }
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  captureGraphics.resizeCanvas(windowWidth, windowHeight);
+  physics.setWorldBounds(new Rect(0, 0, width, height));
+
+  // Reinitialize particles and springs for the new canvas size
+  particles = [];
+  pointsType = [];
+  springs = [];
+  initializeParticlesAndSprings();
+}
