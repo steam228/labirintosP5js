@@ -27,29 +27,44 @@
     <main>
     </main>
     <button id="fullScreenButton" title="Enter Fullscreen"></button>
-    <script src="particle.js"></script>
-    <script src="spring.js"></script>
-    <script src="sketch.js"></script>
     <script>
-      document.getElementById('fullScreenButton').addEventListener('click', () => {
-        let fs = document.documentElement;
-        if (fs.requestFullscreen) {
-          fs.requestFullscreen();
-        } else if (fs.webkitRequestFullscreen) { /* Safari */
-          fs.webkitRequestFullscreen();
-        } else if (fs.msRequestFullscreen) { /* IE11 */
-          fs.msRequestFullscreen();
-        }
-      });
+      // Ensure all scripts are loaded before starting the sketch
+      function loadScript(url, callback) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onload = callback;
+        document.head.appendChild(script);
+      }
 
-      document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-          document.getElementById('fullScreenButton').style.display = 'none';
-        } else {
-          document.getElementById('fullScreenButton').style.display = 'block';
-        }
+      loadScript('particle.js', function() {
+        loadScript('spring.js', function() {
+          loadScript('sketch.js', function() {
+            // All scripts are now loaded, set up fullscreen functionality
+            document.getElementById('fullScreenButton').addEventListener('click', () => {
+              let fs = document.documentElement;
+              if (fs.requestFullscreen) {
+                fs.requestFullscreen();
+              } else if (fs.webkitRequestFullscreen) { /* Safari */
+                fs.webkitRequestFullscreen();
+              } else if (fs.msRequestFullscreen) { /* IE11 */
+                fs.msRequestFullscreen();
+              }
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+              if (document.fullscreenElement) {
+                document.getElementById('fullScreenButton').style.display = 'none';
+              } else {
+                document.getElementById('fullScreenButton').style.display = 'block';
+              }
+            });
+
+            // Start the p5.js sketch
+            new p5();
+          });
+        });
       });
     </script>
   </body>
-  
 </html>
