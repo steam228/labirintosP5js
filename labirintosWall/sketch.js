@@ -10,7 +10,7 @@ let lineHeight;
 let leftMargin;
 
 function preload() {
-  font = loadFont("Acumin-BdPro.otf");
+  font = loadFont("./Acumin-BdPro.otf");
   console.log("Font loaded");
 }
 
