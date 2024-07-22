@@ -1,8 +1,8 @@
 // main Labirintos sketch, should show interaction with text to speech in a projection and send sentences and picture of it to the server.
 
-const { VerletPhysics2D, VerletParticle2D, VerletSpring2D } = toxi.physics2d;
-const { GravityBehavior } = toxi.physics2d.behaviors;
-const { Vec2D, Rect } = toxi.geom;
+// const { VerletPhysics2D, VerletParticle2D, VerletSpring2D } = toxi.physics2d;
+// const { GravityBehavior } = toxi.physics2d.behaviors;
+// const { Vec2D, Rect } = toxi.geom;
 
 let physics;
 let particles = [];
