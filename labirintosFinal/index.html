@@ -7,97 +7,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.speech.min.js"></script>
     <script src="https://unpkg.com/ml5@0.5.0/dist/ml5.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <style>
-      body, html {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          overflow: hidden;
-      }
-      #p5_loading {
-          background-color: #000;
-          color: #fff;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-family: Arial, sans-serif;
-          font-size: 24px;
-          z-index: 1000;
-      }
-      #fullScreenButton {
-          position: fixed;
-          top: 10px;
-          right: 10px;
-          z-index: 1001;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background-color: black;
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          transition: transform 0.3s ease;
-      }
-      #fullScreenButton:hover {
-          transform: scale(1.1);
-      }
-      #p5Canvas {
-          position: absolute;
-          top: 0;
-          left: 0;
-          z-index: 0;
-      }
-  </style>
-</head>
-<body>
-  <div id="p5_loading">Loading...</div>
-  <div id="p5Canvas"></div>
-  <button id="fullScreenButton" title="Enter Fullscreen"></button>
-  <script src="particle.js"></script>
-  <script src="spring.js"></script>
-  <script src="sketch.js"></script>
-  <script>
-      // Ensure the p5.js sketch uses the p5Canvas div
-      new p5(function(p) {
-          // Copy all global mode sketch functions to instance mode
-          for (let f in window) {
-              if (typeof window[f] === 'function') {
-                  p[f] = window[f].bind(p);
-              }
-          }
-
-          // Override createCanvas to use the p5Canvas div
-          p.createCanvas = function() {
-              return p._createCanvas.apply(p, arguments).parent('p5Canvas');
-          }
-      });
-
-      document.getElementById('fullScreenButton').addEventListener('click', () => {
-          let fs = document.documentElement;
-          if (fs.requestFullscreen) {
-              fs.requestFullscreen();
-          } else if (fs.webkitRequestFullscreen) { /* Safari */
-              fs.webkitRequestFullscreen();
-          } else if (fs.msRequestFullscreen) { /* IE11 */
-              fs.msRequestFullscreen();
-          }
-      });
-
-      document.addEventListener('fullscreenchange', () => {
-          if (document.fullscreenElement) {
-              document.getElementById('fullScreenButton').style.display = 'none';
-          } else {
-              document.getElementById('fullScreenButton').style.display = 'block';
-          }
-      });
-  </script>
-</body>
+    
+  </head>
+  <body>
+    <script src="sketch.js"></script>
+    <script src="particle.js"></script>
+    <script src="spring.js"></script>
+  </body>
 </html>
