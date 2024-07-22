@@ -41,10 +41,7 @@ function setup() {
   setupVideo();
   setupTextAndSpeech();
   setupWebSocket();
-
-  // Setup fullscreen button
-  fullScreenButton = select("#fullScreenButton");
-  fullScreenButton.mousePressed(toggleFullScreen);
+  setupFullScreenButton();
 }
 
 function setupWebSocket() {
@@ -215,13 +212,6 @@ function draw() {
   updateWristPositions();
   checkWristProximity();
   drawText();
-
-  // Handle fullscreen button visibility
-  if (fullscreen()) {
-    fullScreenButton.style("display", "none");
-  } else {
-    fullScreenButton.style("display", "block");
-  }
 }
 
 function updateWristPositions() {
@@ -366,10 +356,24 @@ function sendImageViaWebSocket(graphics) {
   }
 }
 
+function setupFullScreenButton() {
+  fullScreenButton = document.getElementById("fullScreenButton");
+  fullScreenButton.addEventListener("click", toggleFullScreen);
+}
+
 function toggleFullScreen() {
   let fs = fullscreen();
   fullscreen(!fs);
+  if (!fs) {
+    fullScreenButton.style.display = "none";
+  }
 }
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    fullScreenButton.style.display = "block";
+  }
+});
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
