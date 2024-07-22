@@ -4,7 +4,7 @@ const { VerletPhysics2D, VerletParticle2D, VerletSpring2D } = toxi.physics2d;
 const { GravityBehavior } = toxi.physics2d.behaviors;
 const { Vec2D, Rect } = toxi.geom;
 
-let physics;
+window.physics;
 let particles = [];
 let pointsType = [];
 let springs = [];
@@ -25,6 +25,7 @@ let lastListeningToggleTime = 0;
 const listeningCooldown = 1800;
 let socket;
 let captureGraphics;
+let fullScreenButton;
 
 function preload() {
   font = loadFont("Acumin-BdPro.otf");
@@ -33,14 +34,22 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   captureGraphics = createGraphics(windowWidth, windowHeight);
-  physics = new VerletPhysics2D();
-  physics.setWorldBounds(new Rect(0, 0, width, height));
+  window.physics = new VerletPhysics2D();
+  window.physics.setWorldBounds(new Rect(0, 0, width, height));
+
+  // Ensure Particle is defined before using it
+  if (typeof Particle === "undefined") {
+    console.error(
+      "Particle class is not defined. Check if particle.js is loaded correctly."
+    );
+    return;
+  }
 
   initializeParticlesAndSprings();
   setupVideo();
   setupTextAndSpeech();
-
   setupWebSocket();
+  setupFullScreenButton();
 }
 
 function setupWebSocket() {
@@ -353,4 +362,35 @@ function sendImageViaWebSocket(graphics) {
   } else {
     console.error("WebSocket is not open. Unable to send image.");
   }
+}
+
+function setupFullScreenButton() {
+  fullScreenButton = document.getElementById("fullScreenButton");
+  fullScreenButton.addEventListener("click", toggleFullScreen);
+}
+
+function toggleFullScreen() {
+  let fs = fullscreen();
+  fullscreen(!fs);
+  if (!fs) {
+    fullScreenButton.style.display = "none";
+  }
+}
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    fullScreenButton.style.display = "block";
+  }
+});
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  captureGraphics.resizeCanvas(windowWidth, windowHeight);
+  physics.setWorldBounds(new Rect(0, 0, width, height));
+
+  // Reinitialize particles and springs for the new canvas size
+  particles = [];
+  pointsType = [];
+  springs = [];
+  initializeParticlesAndSprings();
 }
