@@ -41,8 +41,7 @@ function setup() {
   setupTextAndSpeech();
 
   setupWebSocket();
-  
-
+}
 function setupWebSocket() {
   socket = new WebSocket("wss://206.189.10.46:8080");
 
@@ -368,5 +367,3 @@ function windowResized() {
   springs = [];
   initializeParticlesAndSprings();
 }
-
-
