@@ -52,7 +52,7 @@ function setupWebSocket() {
   socket.onerror = (error) => {
     console.error("WebSocket Error: ", error);
     console.log(
-      "If you're seeing certificate errors, please visit https://206.189.10.46:8080 in a new tab and accept the risk to proceed."
+      "If you're seeing certificate errors, please visit https://159.89.28.181:8080 in a new tab and accept the risk to proceed."
     );
   };
 
