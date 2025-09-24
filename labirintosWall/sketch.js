@@ -29,7 +29,7 @@ function setup() {
     `Canvas size: ${width}x${height}, Font size: ${fontSize}, Line height: ${lineHeight}`
   );
 
-  socket = new WebSocket("wss://206.189.10.46:8080");
+  socket = new WebSocket("wss://159.89.28.181:8080");
 
   socket.onopen = () => {
     console.log("Connected to WebSocket server");
